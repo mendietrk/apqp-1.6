@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FMEA - Lista de Análisis</title>
+  <link rel="stylesheet" href="/css/estilos.css">
+</head>
+<body>
+  <h1>Análisis de Modo y Efecto de Falla</h1>
+  <a href="/fmea/new">Agregar nuevo análisis</a>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Modo de Falla</th>
+        <th>Efecto</th>
+        <th>Causa</th>
+        <th>Severidad</th>
+        <th>Ocurrencia</th>
+        <th>Detección</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% fmeas.forEach(function(fmea) { %>
+        <tr>
+          <td><%= fmea.nombre %></td>
+          <td><%= fmea.modoFalla %></td>
+          <td><%= fmea.efecto %></td>
+          <td><%= fmea.causa %></td>
+          <td><%= fmea.severidad %></td>
+          <td><%= fmea.ocurrencia %></td>
+          <td><%= fmea.deteccion %></td>
+          <td>
+            <a href="/fmea/<%= fmea._id %>/edit">Editar</a>
+            <form action="/fmea/<%= fmea._id %>?_method=DELETE" method="POST" style="display:inline;">
+              <button type="submit">Borrar</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>
