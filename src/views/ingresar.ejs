@@ -1,5 +1,14 @@
 <%- include ('styles'); %>
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balance de Movimientos</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
   <h1>Balance Total: <%= balanceTotal.toFixed(2) %> MXN</h1>
 
   <!-- Formulario para actualizar tipos de cambio -->
@@ -42,12 +51,12 @@
   <!-- Balances por denominación -->
   <h2>Balances por Denominación</h2>
   <ul>
-    <% denominaciones.forEach(denominacion => { %>
+    <% for (const moneda in denominaciones) { %>
       <li>
-        <%= denominacion.nombre %>: <%= denominacion.balance.toFixed(4) %>
-        (Compra: <%= denominacion.compra %> MXN, Venta: <%= denominacion.venta %> MXN)
+        <%= moneda %>: <%= denominaciones[moneda].balance.toFixed(4) %>
+        (Compra: <%= denominaciones[moneda].compra %> MXN, Venta: <%= denominaciones[moneda].venta %> MXN)
       </li>
-    <% }) %>
+    <% } %>
   </ul>
 
   <!-- Registro de movimientos -->
@@ -55,34 +64,11 @@
   <ul>
     <% movimientos.forEach(movimiento => { %>
       <li>
-        <span class="fecha"><%= movimiento.fecha.toLocaleDateString() %></span> -
+        <span class="fecha"><%= movimiento.fecha %></span> -
         <span class="<%= movimiento.tipo %>"><%= movimiento.tipo %>: <%= movimiento.monto.toFixed(4) %> <%= movimiento.moneda %></span>
         (<%= movimiento.descripcion %>)
       </li>
     <% }) %>
   </ul>
-
-  <!-- Script para cambiar el modo -->
-  <script>
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-
-    // Verificar el tema guardado en localStorage
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      body.setAttribute('data-theme', savedTheme);
-    }
-
-    // Cambiar el tema al hacer clic en el botón
-    themeToggle.addEventListener('click', () => {
-      if (body.getAttribute('data-theme') === 'dark') {
-        body.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-      } else {
-        body.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-      }
-    });
-  </script>
 </body>
 </html>
