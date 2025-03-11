@@ -1,15 +1,94 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Balance de Movimientos</title>
-  <link rel="stylesheet" href="/css/styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Estilos existentes */
+    @import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+    
+    :root {
+      --bg-color: #f7f7f7;
+      --text-color: #333;
+      --container-bg: #fff;
+    }
+    
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Lato', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    
+    .container {
+      background-color: var(--container-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    }
+    
+    .dark-mode {
+      --bg-color: #1e1e1e;
+      --text-color: #f7f7f7;
+      --container-bg: #333;
+    }
+    
+    .theme-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: var(--text-color);
+    }
+    
+    .theme-toggle .fa-sun {
+      display: none;
+    }
+    
+    .dark-mode .fa-moon {
+      display: none;
+    }
+    
+    .dark-mode .fa-sun {
+      display: inline;
+    }
+    
+    .fa-moon {
+      display: inline;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modo Oscuro</title>
 </head>
 <body>
-  <!-- Botón de modo oscuro/claro -->
-  <div id="theme-toggle" class="theme-toggle">
-    <i class="fas fa-sun"></i> <!-- Ícono del sol (modo claro) -->
-    <i class="fas fa-moon"></i> <!-- Ícono de la luna (modo oscuro) -->
-  </div>
+  <button id="theme-toggle" class="theme-toggle" onclick="toggleDarkMode()">
+    <i class="fas fa-moon"></i>
+    <i class="fas fa-sun"></i>
+  </button>
+
+   <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem("dark-mode") === "enabled") {
+        document.body.classList.add("dark-mode");
+      }
+    });
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+      if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("dark-mode", "enabled");
+      } else {
+        localStorage.removeItem("dark-mode");
+      }
+    }
+  </script>
+</body>
+</html>
