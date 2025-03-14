@@ -1,0 +1,50 @@
+<%- include ('partials/_header'); %>
+
+<div class="col-md-7">
+    <div>
+        
+    </div>
+    <table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Rev. interna</th>
+            <!-- <th>password</th>
+            <th>puesto</th>
+            <th>área</th>
+            <th>telefono</th>
+            <th>correo</th> -->
+        </tr>
+    </thead>
+  
+    <tbody>
+        <% for(var i = 0; i < pars.length; i++) { %>
+      </div>
+      <td><%= pars[i].pa1 %></td>
+      <td><%= pars[i].pa2 %></td>
+  
+      <!-- <td><%= pars[i].pa3 %></td>
+        <td><%= pars[i].pa4 %></td>
+        <td><%= pars[i].pa5 %></td>
+        <td><%= pars[i].pa6 %></td>
+        <td><%= pars[i].pa7 %></td> -->
+      
+        <td class="plus">
+                  
+                    <a href="/par/edit/<%= pars[i]._id %>" class="edit-btn">Editar</a>
+
+                    <a href="/ope/<%= pars[i]._id %>" class="edit-btn">Registrar Operación</a>
+
+                    <a href="/psw/<%= pars[i]._id %>" class="edit-btn">PSW</a>
+
+                    
+                  
+                  
+                </td>
+            </tr>
+        <% } %>   
+        </tbody>
+    </table>
+  </div>
+
+  <%- include ('partials/_footer'); %>

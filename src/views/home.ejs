@@ -1,17 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acceso a la Base de Datos</title>
-  <link rel="stylesheet" href="/css/estilos.css">
-</head>
-<body>
-  <h1>Ingrese la clave para acceder a la base de datos</h1>
-  <form action="/db/submit" method="POST">
-    <label for="db1">Clave:</label>
-    <input type="password" id="db1" name="db1" required>
-    <button type="submit">Acceder</button>
-  </form>
-</body>
-</html>
+<%- include ('partials/_header'); %>
+
+<form action="/db/submit" method="POST">
+  <label for="db1">Ingresa tu usuario de la base de datos</label>
+  <input type="text" name="db1" id="db1" placeholder="Usuario">
+  <button type="submit">Enviar</button>
+</form>

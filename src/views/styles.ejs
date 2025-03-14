@@ -6,9 +6,9 @@
     @import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
     
     :root {
-      --bg-color: #f7f7f7;
-      --text-color: #333;
-      --container-bg: #fff;
+      --bg-color: #ffffff; /* Fondo más claro */
+      --text-color: #000000; /* Texto más oscuro */
+      --container-bg: #f0f0f0; /* Fondo del contenedor más claro */
     }
     
     body {
@@ -31,9 +31,9 @@
     }
     
     .dark-mode {
-      --bg-color: #1e1e1e;
-      --text-color: #f7f7f7;
-      --container-bg: #333;
+      --bg-color: #121212; /* Fondo más oscuro */
+      --text-color: #ffffff; /* Texto más claro */
+      --container-bg: #1e1e1e; /* Fondo del contenedor más oscuro */
     }
     
     .theme-toggle {
@@ -74,7 +74,7 @@
     <i class="fas fa-sun"></i>
   </button>
 
-   <script>
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
       if (localStorage.getItem("dark-mode") === "enabled") {
         document.body.classList.add("dark-mode");

@@ -1,24 +1,27 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-// Esquema para las denominaciones
-const denominacionSchema = new mongoose.Schema({
-  nombre: { type: String, required: true, unique: true }, // ETH, BTC, USD
-  balance: { type: Number, default: 0 },
-  compra: { type: Number, required: true },
-  venta: { type: Number, required: true },
-});
+const fmeaSchema = new Schema
+({
+    "us1": "String",
+    "or1": "String",
+    "cu1": "String",
+    "pa1": "String",
+    "op1": "String",
+    "fm1": "String",
+    "fm2": "String",
+    "fm3": "String",
+    "fm4": "String",
+    "fm5": "String",
+    "fm6": "String",
+    "fm7": "String",
+    "fm8": "String",
+    "fm9": "String",
+    "fm10": "String",
+    "fm11": "String",
+    "fm12": "String",
+    "fm13": "String"
+  }
+  );
 
-// Esquema para los movimientos
-const movimientoSchema = new mongoose.Schema({
-  tipo: { type: String, required: true, enum: ['entrada', 'salida'] },
-  monto: { type: Number, required: true },
-  descripcion: { type: String, required: true },
-  moneda: { type: String, required: true },
-  fecha: { type: Date, default: Date.now },
-});
-
-// Crear modelos
-const Denominacion = mongoose.model('Denominacion', denominacionSchema);
-const Movimiento = mongoose.model('Movimiento', movimientoSchema);
-
-module.exports = { Denominacion, Movimiento };
+module.exports = mongoose.model("fmea", fmeaSchema);
