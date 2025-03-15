@@ -11,7 +11,8 @@ const Fme = require("../models/Fmea.js");
 const Pro = require("../models/proc.js");
 const Pcp = require("../models/pcpr.js");
 
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const Fmea = require("../models/Fmea.js");
 
 router.post('/db/submit', (req, res) => {
     const bd1 = req.body.db1; 
@@ -214,6 +215,20 @@ router.post("/dup/:id", async (req, res) =>
     await User.updateOne({_id: id}, req.body);
     res.redirect("/db");
 });
+
+router.get("/fme/dup/:id", async (req, res) =>
+    {
+        const {id} = req.params;
+        const fmeas = await Fmea.findById(id);
+        res.render("fmeadup", {fmeas});
+    });
+    
+    router.post("/fme/dup/:id", async (req, res) =>
+    {
+        const {id} = req.params;
+        await Fmea.updateOne({_id: id}, req.body);
+        res.redirect("/db");
+    });
 
 router.get("/delete/:id", async (req, res) =>
 {

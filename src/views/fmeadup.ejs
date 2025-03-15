@@ -1,9 +1,8 @@
 <%- include('partials/_header'); %>
 
-<!-- FORM -->
 <div class="container">
     <div class="row">
-        <h1 class="text-center">Editar</h1>
+        <h1 class="text-center">Duplicar</h1>
 
         <!-- Botón de borrar -->
         <div style="display: inline-block;">
@@ -15,7 +14,7 @@
             <a href="/fme/dup/<%= fmeas._id %>" class="edit-btn" style="color: rgb(64, 12, 207);">Duplicar</a>
         </div>
 
-        <!-- Formulario de edición -->
+        <!-- Formulario de duplicar -->
         <div class="container">
             <form action="/fme/update/<%= fmeas._id %>" method="POST">
                 <!-- Campo: Usuario -->
