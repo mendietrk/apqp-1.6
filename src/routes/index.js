@@ -419,8 +419,10 @@ router.get("/fme/delete/:id", async (req, res) =>
 
 router.get("/fme/:id", async (req, res) => {
     const { id } = req.params;
+    const par = await Par.findById(id);
     const fme = await Chr.findById(id);
-    res.render("fmea", {fme});
+    const ope = await Ope.findById(id);
+    res.render("fmea", {par, ope, fme});
     
 });
 
@@ -467,24 +469,6 @@ router.get("/fme/:id", async (req, res) => {
 //     res.redirect('/signin')
 //   }
 
-router.post('/db/submit', (req, res) => {
-    const bd1 = req.body.db1; 
-    const URI ='mongodb+srv://' + bd1 +
-      ':HHnOQn2B4iVtEdOU@cluster0.pgfsbij.mongodb.net/rapqp?retryWrites=true&w=majority';
-      console.log(bd1)
-      mongoose.connect(URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      })
-        .then(() => {
-          console.log("Conexión exitosa a la base de datos");
-        })
-        .catch(error => {
-          console.log("Error al conectar a la base de datos:", error);
-        });
-        res.redirect("/db");
-    
-  });
 
   router.get("/pro", async (req, res) => {
     const procs = await Pro.find();
