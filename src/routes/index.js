@@ -7,7 +7,7 @@ const Cus = require("../models/cust.js");
 const Par = require("../models/part.js");
 const Ope = require("../models/oper.js");
 const Chr = require("../models/chrc.js");
-const Fme = require("../models/fmea.js");
+const Fme = require("../models/Fmea.js");
 const Pro = require("../models/proc.js");
 const Pcp = require("../models/pcpr.js");
 
