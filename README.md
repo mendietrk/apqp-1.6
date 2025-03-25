@@ -75,8 +75,18 @@ a la cual corresponde la siguiente ruta.
     const ope = await Ope.findById(id);
     res.render("fmea", {par, ope, fme});
 
-    Los datos de cada elemento se envian a la siguiente vista de manera que se vaya integrando la informacion, lo cual permitira accederlos por medio de funciones de seleccion o busqueda, por ejemplo: un modo de falla esta relacionado a un numero de operacion; un numero de parte; un cliente; y una organizacion. Sin embargo el siste escribe esta relacion de manera automatica, sin tener que estar ingresando los datos en cada modo de falla, el usuario solo se encargar de registrar la informacion minima requerida en el formulario de cada elemento.
+    Los datos de cada elemento se envian a la siguiente vista de manera que se vaya integrando la informacion, lo cual permitira accederlos por medio de funciones de seleccion o busqueda, por ejemplo: un modo de falla esta relacionado a un numero de operacion; un numero de parte; un cliente; y una organizacion. Sin embargo el sistema escribe esta relacion de manera automatica, sin tener que estar ingresando los datos en cada modo de falla, el usuario solo se encargar de registrar la informacion minima requerida en el formulario de cada elemento.
 
+    La relacion que existe entre las bases de datos es muy importante, ya que se petende que el acceso a los datos permite ser filtrados usando diferentes campos, por lo que es necesario que se vaya armando la cadena conforme se ingresa la informacion:
+
+    la base de datos que corresponde a la organización incluye el nombre que posetriormente se usara en los reportes de diagrama de flujo, pcp y fmea. De esta se deriva la bd de clientes, que incluyen el nombre del cliente 
+
+
+
+
+PFMEA
+
+se agrega la plantilla fmeaprint, para renderizar los registros en el formato de la AIAG, esto requiere que se reciban los datos del backend en grupo de elementos, la cantidad de elementos se ajusta en la linea 308 de index.js y el espacio entre elementos se ajusta en la linea 148 de fmeaprint.
 
 PROMPTS usados con IA para mejorar la eficiencia
 

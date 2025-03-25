@@ -293,6 +293,8 @@ router.get("/flowchart/:cu1", async (req, res) =>
     res.render("flowchart2", {opes});
 });
 
+
+
 router.get("/pcpview/:pc10", async (req, res) =>
 {   const { pc10 } = req.params;
     const pcps = await Pcp.find();
@@ -300,12 +302,29 @@ router.get("/pcpview/:pc10", async (req, res) =>
     res.render("PCP", {pcps});
 });
 
-router.get("/fmea", async (req, res) =>
-{
-    const opes = await Ope.find();
-    console.log(opes);
-    res.render("pfmea", {opes});
+router.get("/fmea", async (req, res) => {
+    try {
+        let page = parseInt(req.query.page) || 1; // Página actual, por defecto 1
+        let limit = 9; // Número de registros por página
+        let skip = (page - 1) * limit;
+
+        const totalRecords = await Fmea.countDocuments(); // Total de registros
+               const fmeas = await Fmea.find().skip(skip).limit(limit); // Consulta con paginación
+
+        res.render("fmeaprint", {
+            fmeas,
+            page,
+            totalPages: Math.ceil(totalRecords / limit) // Total de páginas
+        });
+
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        res.status(500).send("Error al obtener los registros");
+    }
 });
+
+
+
 
 router.get("/psw/:id", async (req, res) =>
 {   const { id } = req.params;
@@ -400,7 +419,7 @@ router.get("/chr/:id", async (req, res) => {
 router.get("/fme", async (req, res) =>
 {
     const fmeas = await Fme.find();
-    console.log(fmeas);
+    
     res.render("fmeas", {fmeas});
 });
 
@@ -440,6 +459,8 @@ router.get("/fme/:id", async (req, res) => {
     res.render("fmea", {par, ope, fme});
     
 });
+
+
 
 // router.get('/signup', (req, res, next) => {
 //     res.render('signup');
