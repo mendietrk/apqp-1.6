@@ -77,7 +77,7 @@ a la cual corresponde la siguiente ruta.
 
     Los datos de cada elemento se envian a la siguiente vista de manera que se vaya integrando la informacion, lo cual permitira accederlos por medio de funciones de seleccion o busqueda, por ejemplo: un modo de falla esta relacionado a un numero de operacion; un numero de parte; un cliente; y una organizacion. Sin embargo el sistema escribe esta relacion de manera automatica, sin tener que estar ingresando los datos en cada modo de falla, el usuario solo se encargar de registrar la informacion minima requerida en el formulario de cada elemento.
 
-    La relacion que existe entre las bases de datos es muy importante, ya que se petende que el acceso a los datos permite ser filtrados usando diferentes campos, por lo que es necesario que se vaya armando la cadena conforme se ingresa la informacion:
+    La relacion que existe entre las bases de datos es muy importante, ya que esto permite el acceso a los datos mediante filtros usando diferentes campos, por lo que es necesario que se vaya armando la cadena conforme se ingresa la informacion:
 
     la base de datos que corresponde a la organización incluye el nombre que posetriormente se usara en los reportes de diagrama de flujo, pcp y fmea. De esta se deriva la bd de clientes, que incluyen el nombre del cliente 
 
@@ -88,8 +88,44 @@ PFMEA
 
 se agrega la plantilla fmeaprint, para renderizar los registros en el formato de la AIAG, esto requiere que se reciban los datos del backend en grupo de elementos, la cantidad de elementos se ajusta en la linea 308 de index.js y el espacio entre elementos se ajusta en la linea 148 de fmeaprint.
 
-PROMPTS usados con IA para mejorar la eficiencia
+PCP
 
-"considerando el siguiente codigo, por favor me puedes crear una vista en ejs que permita ingresar la"
+el plan de control de proceso se renderiza en PCP.ejs, con el nombre del producto se accede a la BD, la informacion se mueve a traves del backend como pcps, ademas la ruta esta escrita en la linea 300
 
-"como puedo usar webpack para unir todos los archivos de mi codigo en uno solo."
+const User = require("../models/exps.js");
+const Org = require("../models/orgs.js");
+const Cus = require("../models/cust.js");
+const Par = require("../models/part.js");
+const Ope = require("../models/oper.js");
+const Chr = require("../models/chrc.js");
+const Fme = require("../models/Fmea.js");
+const Pro = require("../models/proc.js");
+const Pcp = require("../models/pcpr.js");
+const Fmea = require("../models/Fmea.js");
+
+    "us1": "String",   
+    "or2": "String",    
+    "cu2": "String",
+    "cu3": "String",
+    "pa1": "String",
+    "pa2": "String",  
+    "pa4": "String",
+    "pc1": "String",
+    "pc2": "String",
+    "pc3": "String",
+    "pc4": "String",
+    "pc5": "String",
+    "pc6": "String",
+    "pc7": "String",
+    "pc8": "String",
+    "pc9": "String",
+    "pc10": "String",
+    "pc11": "String",
+    "pc12": "String",
+    "pc13": "String",
+    "pc14": "String",
+    "pc15": "String",
+    "pc16": "String",
+    "pc17": "String",
+    "pc18": "String",
+    "pc19": "String"

@@ -10,9 +10,9 @@ const Chr = require("../models/chrc.js");
 const Fme = require("../models/Fmea.js");
 const Pro = require("../models/proc.js");
 const Pcp = require("../models/pcpr.js");
-
-const mongoose = require("mongoose");
 const Fmea = require("../models/Fmea.js");
+const mongoose = require("mongoose");
+
 
 router.post('/db/submit', (req, res) => {
     const bd1 = req.body.db1; 
@@ -295,11 +295,27 @@ router.get("/flowchart/:cu1", async (req, res) =>
 
 
 
-router.get("/pcpview/:pc10", async (req, res) =>
-{   const { pc10 } = req.params;
-    const pcps = await Pcp.find();
-    console.log(pcps);
-    res.render("PCP", {pcps});
+
+
+router.get("/pcpview/:pc10", async (req, res) => {
+    try {
+        let page = parseInt(req.query.page) || 1; // Página actual, por defecto 1
+        let limit = 9; // Número de registros por página
+        let skip = (page - 1) * limit;
+
+        const totalRecords = await Pcp.countDocuments(); // Total de registros
+               const pcps = await Pcp.find().skip(skip).limit(limit); // Consulta con paginación
+console.log(pcps)
+        res.render("PCP", {
+            pcps,
+            page,
+            totalPages: Math.ceil(totalRecords / limit) // Total de páginas
+        });
+
+    } catch (error) {
+        console.error("Error al obtener los datos:", error);
+        res.status(500).send("Error al obtener los registros");
+    }
 });
 
 router.get("/fmea", async (req, res) => {
@@ -545,7 +561,6 @@ router.get("/pro/:id", async (req, res) => {
 
 router.get("/pcp", async (req, res) => {
     const pcps = await Pcp.find();
-    console.log(pcps);
     res.render("pcprs", { pcps });
 });
 
