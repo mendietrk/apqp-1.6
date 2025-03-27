@@ -350,6 +350,30 @@ router.get("/psw/:id", async (req, res) =>
     res.render("psw2", {pars});
 });
 
+router.get("/acep/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Verificar si el ID es un ObjectId válido de MongoDB
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).send("ID no válido");
+        }
+
+        const acs = await Ace.findById(id);
+
+        // Si no encuentra el documento, responder con un 404
+        if (!acs) {
+            return res.status(404).send("Registro no encontrado");
+        }
+
+        console.log("Registro encontrado:", acs);
+        res.render("acprint", { acs });
+    } catch (error) {
+        console.error("Error al buscar el registro:", error);
+        res.status(500).send("Error en el servidor");
+    }
+});
+
 router.post("/ope/submit", async (req, res) =>
 {   console.log(new Ope(req.body));
     const parts = new Ope(req.body);

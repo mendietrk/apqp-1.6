@@ -12,12 +12,18 @@
     </thead>
     <tbody>
         <% if (acs && acs.length > 0) { %> 
-            <% acs.forEach(ac => { %>
+            <% acs.forEach(acs => { %>
                 <tr>
-                    <td><%= ac.us1 %></td>
-                    <td><%= ac.us2 %></td>
+                    <td><%= acs.us1 %></td>
+                    <td><%= acs.us2 %></td>
                     <td>
-                        <a href="/ace/edit/<%= ac._id %>" class="edit-btn">Editar</a>
+                        <a href="/ace/edit/<%= acs._id %>" class="edit-btn">Editar</a>
+                        <% if (acs && acs._id) { %>
+                            <a href="/acep/<%= acs._id %>" class="edit-btn">AC</a>
+                        <% } else { %>
+                            <p>Error: ID no encontrado</p>
+                        <% } %>
+                        
                     </td>
                 </tr>
             <% }) %>
