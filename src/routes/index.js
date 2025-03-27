@@ -11,6 +11,7 @@ const Fme = require("../models/Fmea.js");
 const Pro = require("../models/proc.js");
 const Pcp = require("../models/pcpr.js");
 const Fmea = require("../models/Fmea.js");
+const Ace = require ("../models/ac.js");
 const mongoose = require("mongoose");
 
 
@@ -564,12 +565,37 @@ router.get("/pcp", async (req, res) => {
     res.render("pcprs", { pcps });
 });
 
+router.get("/ace", async (req, res) => {
+    try {
+        const acs = await Ace.find(); // Obtener datos de la base de datos
+        console.log(acs)
+        res.render("acs", { acs }); // Enviar datos a la vista
+    } catch (error) {
+        console.error("Error al obtener datos:", error);
+        res.render("ac", { acs: [] }); // En caso de error, evitar que falle la vista
+    }
+});
+
+// Procesar formulario y guardar en la base de datos
+router.post("/ace/submit", async (req, res) => {
+    try {
+        const newAcs = new Ace(req.body);
+        await newAcs.save();
+        res.redirect("/ace/"); // Redirigir a la vista para ver los datos guardados
+    } catch (error) {
+        console.error("Error al guardar datos:", error);
+        res.status(500).send("Error al guardar los datos.");
+    }
+});
+
+
 router.post("/pcp/submit", async (req, res) => {
     console.log(new Pcp(req.body));
     const pcps = new Pcp(req.body);
     await pcps.save();
     res.redirect("/pcp/");
 });
+
 
 router.post("/pcp/update/:id", async (req, res) => {
     const { id } = req.params;
@@ -581,6 +607,24 @@ router.get("/pcp/edit/:id", async (req, res) => {
     const { id } = req.params;
     const pcps = await Pcp.findById(id);
     res.render("pcpredit", { pcps });
+});
+
+router.get("/ace/edit/:id", async (req, res) => {
+    const { id } = req.params;
+    const acs = await Ace.findById(id);
+    res.render("Acedit", { acs });
+});
+
+router.post("/ace/update/:id", async (req, res) => {
+    const { id } = req.params;
+    await Ace.updateOne({ _id: id }, req.body);
+    res.redirect("/ace");
+});
+
+router.get("/ace/delete/:id", async (req, res) => {
+    const { id } = req.params;
+    const acs = await Ace.deleteOne({ _id: id });
+    res.redirect("/ace/");
 });
 
 router.get("/pcp/delete/:id", async (req, res) => {

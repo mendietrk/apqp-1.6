@@ -7,6 +7,11 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Configuración de la aplicación Express
 
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  next();
+});
+
 const indexRoutes = require("./src/routes/index.js");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
