@@ -605,11 +605,15 @@ router.post("/ace/submit", async (req, res) => {
     try {
         const newAcs = new Ace(req.body);
         await newAcs.save();
-        res.redirect("/ace/"); // Redirigir a la vista para ver los datos guardados
+        res.redirect("/sorpresa"); // Redirigir a la vista para ver los datos guardados
     } catch (error) {
         console.error("Error al guardar datos:", error);
         res.status(500).send("Error al guardar los datos.");
     }
+});
+
+router.get('/sorpresa', (req, res) => {
+    res.render('sorpresa');
 });
 
 
