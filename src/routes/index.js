@@ -18,7 +18,7 @@ const mongoose = require("mongoose");
 router.post('/db/submit', (req, res) => {
     const bd1 = req.body.db1; 
     const URI ='mongodb+srv://' + bd1 +
-      ':HHnOQn2B4iVtEdOU@cluster0.pgfsbij.mongodb.net/rapqp?retryWrites=true&w=majority';
+      ':HHnOQn2B4iVtEdOU@cluster0.pgfsbij.mongodb.net/rapqp2?retryWrites=true&w=majority';
       console.log(bd1)
       mongoose.connect(URI, {
         useNewUrlParser: true,
@@ -163,6 +163,13 @@ router.post("/submit", async (req, res) =>
     await user.save();
     res.redirect("/db");
 });
+
+router.get("/submit", async (req, res) =>
+    {
+        const user = await User.find();
+        console.log(users);
+        res.render("user", {user});
+    });
 
 
 

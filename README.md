@@ -129,3 +129,46 @@ const Fmea = require("../models/Fmea.js");
     "pc17": "String",
     "pc18": "String",
     "pc19": "String"
+
+    Se hacen ajustes en la logica de acceso a la base de datos: 
+
+    algunos formatos requieren la combinacion de informacion que viene de diferentes tablas, en el diseño actual se toman los datos de la tabla anterior y se copian a la nueva tabla, pero no es necesario copiar todos los datos, por eso en el nuevo diseño se va a tomar solo el ID del registro que se necesita.
+
+    Ejemplo:
+
+    Para calcular la capacidad del proceso, se necesitan registrar 5 mediciones y estas se deben asociar a una caracteristica, de esta forma se incluye el id de la caracteristica.
+
+    cuando se requiera filtrar todos los registros de esa caracteristica se hace usando el id de la caracteristica y cuando se requiera un registro especifico se usa el id del registro.
+
+    Para copiar la informacion de un resgistro por ejemplo del analisis de modo y efecto de falla se carga la informacion del arreglo y se guarda asignando un nuevo id.
+
+26 de Abril de 2025
+
+    En esta actualizacion se va a enlazar el programa a una nueva base de datos llamada rapqp2, para documentar los pasos necesarios para un cambio de esta naturaleza y la posibilidad de habilitar diferentes clusters por Cliente de manera que sean preservados los requisitos de confidencialidad de los datos ingresados en la base datos bajo la responsabilidad de MongoDB Atlas.
+
+    En este caso la aplicacion se muestra sin datos, sin embargo el codigo funciona sin interrupciones y se permite acceder a todas las categorias.
+
+    Debido a la programacion en secuencia de la base de datos no es posible registrar una organización si no hay un usuario previamente cargado, asi mismo no es posible cargar los datos de un cliente si no hay definida previamente una organizacion y asi sucesivamente con el resto de las tablas, por lo que en este estado la base de datos permanece vacia y desde la aplicacion no hay forma de poder romper el anidamiento porque no esta disponible una plantilla que permita ingresar a un usuario. A esta plantilla le corresponde la vista user.ejs y la ruta 
+    
+    router.post("/submit", async (req, res) =>
+{   
+    const user = new User(req.body);
+    await user.save();
+    res.redirect("/db");
+});
+ 
+ esta ruta esta en el renglon 160
+
+ También se agrega el siguiente codigo
+
+ router.get("/submit", async (req, res) =>
+    {
+        const user = await User.find();
+        console.log(users);
+        res.render("user", {user});
+    });
+
+por ultimo se escribe el codigo de la plantilla ejs para ingresar el primer usuario.
+
+no hay un modo directo para que se pueda agregar los datos de un nuevo registro, es para evitar malas practicas de parte de los usuarios, por lo que solo se puede ingresar el primer user desde la liga /submit despues de cargar el usuario de la base de datos. se debe ingresar desde la url sobrescribiendo sobre /db
+una vez ingresado el primer usuario se pueden crear otros desde la funcion editar con la opcion a duplicar para facilitar el ingreso de informacion de multiples cuentas.
