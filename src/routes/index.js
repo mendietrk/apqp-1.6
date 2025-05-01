@@ -691,7 +691,7 @@ router.get("/pcp/:id", async (req, res) => {
     res.render("pcpr", { pcps });
 });
 
-// En tu archivo Express (por ejemplo, routes.js o app.js)
+
 router.get('/sev', (req, res) => {
     const datosFMEA = [
       {
@@ -872,6 +872,188 @@ router.get('/sev', (req, res) => {
   
     res.render('deteccion', { datosDeteccion });
   });
+
+  router.get('/sevi', (req, res) => {
+    const datosFMEA = [
+      {
+        puntaje: 10,
+        efectoProducto: "Fails to meet safety and/or regulatory requirements (without warning)",
+        efectoPlanta: "May pose risks to the operator and occurs without warning"
+      },
+      {
+        puntaje: 9,
+        efectoProducto: "Fails to meet safety and/or regulatory requirements (with warning)",
+        efectoPlanta: "May pose risks to the operator and occurs with warning"
+      },
+      {
+        puntaje: 8,
+        efectoProducto: "Loss of primary function (vehicle inoperative, but no safety impact)",
+        efectoPlanta: "Major disruption: 100% of the product could be scrapped. Line stoppage"
+      },
+      {
+        puntaje: 7,
+        efectoProducto: "Degradation of primary function (vehicle operates with reduced performance)",
+        efectoPlanta: "Significant disruption: Part of the batch may be scrapped"
+      },
+      {
+        puntaje: 6,
+        efectoProducto: "Loss of secondary function (vehicle operates, but comfort items are inoperative)",
+        efectoPlanta: "Moderate disruption: 100% of the batch may require rework"
+      },
+      {
+        puntaje: 5,
+        efectoProducto: "Degradation of secondary function (reduced performance in comfort items)",
+        efectoPlanta: "Moderate disruption: Part of the batch may require rework"
+      },
+      {
+        puntaje: 4,
+        efectoProducto: "Appearance issue or noise perceived by the majority (>75%) of customers",
+        efectoPlanta: "Moderate disruption: Rework before processing"
+      },
+      {
+        puntaje: 3,
+        efectoProducto: "Appearance issue or noise perceived by many (~50%) customers",
+        efectoPlanta: "Moderate disruption: Partial rework before processing"
+      },
+      {
+        puntaje: 2,
+        efectoProducto: "Appearance issue or noise perceived by a minority (<25%) of customers",
+        efectoPlanta: "Minor disruption: Slight inconvenience to the process"
+      },
+      {
+        puntaje: 1,
+        efectoProducto: "No noticeable effects",
+        efectoPlanta: "No noticeable effects"
+      }
+    ];
+  
+    res.render('severity', { datosFMEA });
+  });
+
+  router.get('/ocui', (req, res) => {
+    const datosOcurrencia = [
+      {
+        puntaje: 10,
+        probabilidad: "Very High",
+        ocurrencia: "More than 1 in 2"
+      },
+      {
+        puntaje: 9,
+        probabilidad: "Very High",
+        ocurrencia: "1 in 3"
+      },
+      {
+        puntaje: 8,
+        probabilidad: "High",
+        ocurrencia: "1 in 8"
+      },
+      {
+        puntaje: 7,
+        probabilidad: "Moderately High",
+        ocurrencia: "1 in 20"
+      },
+      {
+        puntaje: 6,
+        probabilidad: "Moderate",
+        ocurrencia: "1 in 80"
+      },
+      {
+        puntaje: 5,
+        probabilidad: "Low",
+        ocurrencia: "1 in 400"
+      },
+      {
+        puntaje: 4,
+        probabilidad: "Very Low",
+        ocurrencia: "1 in 2,000"
+      },
+      {
+        puntaje: 3,
+        probabilidad: "Remote",
+        ocurrencia: "1 in 15,000"
+      },
+      {
+        puntaje: 2,
+        probabilidad: "Very Remote",
+        ocurrencia: "1 in 150,000"
+      },
+      {
+        puntaje: 1,
+        probabilidad: "Almost Impossible",
+        ocurrencia: "1 in 1,500,000"
+      }
+    ];
+  
+    res.render('ocurrence', { datosOcurrencia });
+  });
+  
+  router.get('/deti', (req, res) => {
+    const datosDeteccion = [
+      {
+        puntaje: 10,
+        oportunidad: "No opportunity for detection",
+        descripcion: "No process control; Control cannot detect or is not analyzed",
+        probabilidad: "Almost Impossible"
+      },
+      {
+        puntaje: 9,
+        oportunidad: "Detection unlikely at any stage",
+        descripcion: "Failure mode or cause is not easily detected; indirect/random checks",
+        probabilidad: "Very Remote"
+      },
+      {
+        puntaje: 8,
+        oportunidad: "Detection after process",
+        descripcion: "Detected by operator using visual/tactile/auditory means after process",
+        probabilidad: "Remote"
+      },
+      {
+        puntaje: 7,
+        oportunidad: "Detection at source",
+        descripcion: "Detected at station by operator (visual/tactile/auditory) or after process by attribute checks",
+        probabilidad: "Very Low"
+      },
+      {
+        puntaje: 6,
+        oportunidad: "Detection after process",
+        descripcion: "Detected by operator using variable measurement after process or attribute check at station",
+        probabilidad: "Low"
+      },
+      {
+        puntaje: 5,
+        oportunidad: "Detection at source",
+        descripcion: "Detected at station by operator (variable check) or automated alert (light/alarm); includes setup or first-piece inspection",
+        probabilidad: "Moderate"
+      },
+      {
+        puntaje: 4,
+        oportunidad: "Detection after process",
+        descripcion: "Detected by automated control after process, which retains defective part automatically",
+        probabilidad: "Moderately High"
+      },
+      {
+        puntaje: 3,
+        oportunidad: "Detection at source",
+        descripcion: "Detected by automated control at station and retained automatically to stop processing",
+        probabilidad: "High"
+      },
+      {
+        puntaje: 2,
+        oportunidad: "Error detection and/or prevention",
+        descripcion: "Detected by automated control at station that prevents processing of defective parts",
+        probabilidad: "Very High"
+      },
+      {
+        puntaje: 1,
+        oportunidad: "Detection not applicable; Error prevention",
+        descripcion: "Error prevention due to design features; defects cannot be produced thanks to error-proof devices",
+        probabilidad: "Almost Certain"
+      }
+    ];
+  
+    res.render('detection', { datosDeteccion });
+  });
+  
   
 
 
