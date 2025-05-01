@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+
+
 const User = require("../models/exps.js");
 const Org = require("../models/orgs.js");
 const Cus = require("../models/cust.js");
@@ -11,7 +13,8 @@ const Fme = require("../models/Fmea.js");
 const Pro = require("../models/proc.js");
 const Pcp = require("../models/pcpr.js");
 const Fmea = require("../models/Fmea.js");
-const Ace = require ("../models/ac.js");
+const Ace = require("../models/ac.js");
+const Actividad = require("../models/issues.js");
 const mongoose = require("mongoose");
 
 
@@ -519,10 +522,66 @@ router.get("/fme/:id", async (req, res) => {
     
 });
 
-router.get("/ppap/:id", async (req, res) => {
+router.get("/ppap2/:id", async (req, res) => {
     const { id } = req.params;
     const pars = await Par.findById(id);
     res.render("PPAP02", {pars});
+    
+});
+
+router.get("/ppap3/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP03", {pars});
+    
+});
+
+router.get("/ppap4/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP04", {pars});
+    
+});
+
+router.get("/ppap8/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP08", {pars});
+    
+});
+
+router.get("/ppap13/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP13", {pars});
+    
+});
+
+router.get("/ppap14/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP14", {pars});
+    
+});
+
+router.get("/ppap15/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP15", {pars});
+    
+});
+
+router.get("/ppap16/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP16", {pars});
+    
+});
+
+router.get("/ppap17/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP17", {pars});
     
 });
 
@@ -1054,6 +1113,61 @@ router.get('/sev', (req, res) => {
     res.render('detection', { datosDeteccion });
   });
   
+  // GET /actividades/:id/editar
+router.get('/actividades/:id/editar', async (req, res) => {
+    const actividad = await Actividad.findById(req.params.id);
+    res.render('formularioEditar', { actividad });
+  });
+  
+
+  // DELETE /actividades/:id
+router.delete('/actividades/:id', async (req, res) => {
+    await Actividad.findByIdAndDelete(req.params.id);
+    res.redirect('/actividades');
+  });
+  
+  // PUT /actividades/:id
+router.put('/actividades/:id', async (req, res) => {
+    await Actividad.findByIdAndUpdate(req.params.id, req.body);
+    res.redirect('/actividades');
+  });
+
+  router.post('/actividades', async (req, res) => {
+    try {
+      const nuevaActividad = new Actividad({
+        indice: req.body.indice,
+        actividad: req.body.actividad,
+        responsable: req.body.responsable,
+        inicio: req.body.inicio,
+        plazo: req.body.plazo,
+        dias: req.body.dias,
+        porcentajeConcluido: req.body.porcentajeConcluido,
+        inicioReal: req.body.inicioReal,
+        fin: req.body.fin,
+        diasReal: req.body.diasReal,
+        observaciones: req.body.observaciones,
+        emailPara: req.body.emailPara,
+        emailCC: req.body.emailCC,
+        difDias: req.body.difDias
+      });
+  
+      await nuevaActividad.save();
+      res.redirect('/actividades'); // redirige a la lista o página de éxito
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error al guardar la actividad");
+    }
+  });
+
+  router.get('/actividades', async (req, res) => {
+    try {
+      const actividades = await Actividad.find().sort({ indice: 1 }); // ordena por índice
+      res.render('issues', { actividades });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error al obtener las actividades");
+    }
+  });
   
 
 
