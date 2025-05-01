@@ -18,7 +18,7 @@ const mongoose = require("mongoose");
 router.post('/db/submit', (req, res) => {
     const bd1 = req.body.db1; 
     const URI ='mongodb+srv://' + bd1 +
-      ':HHnOQn2B4iVtEdOU@cluster0.pgfsbij.mongodb.net/rapqp2?retryWrites=true&w=majority';
+      ':JLqfp91zOg8yjP2A@cluster0.lnpsbzn.mongodb.net/rapqp2?retryWrites=true&w=majority';
       console.log(bd1)
       mongoose.connect(URI, {
         useNewUrlParser: true,
@@ -30,7 +30,7 @@ router.post('/db/submit', (req, res) => {
         .catch(error => {
           console.log("Error al conectar a la base de datos:", error);
         });
-        res.redirect("/db");
+        res.redirect("/");
     
   });
 
@@ -164,12 +164,23 @@ router.post("/submit", async (req, res) =>
     res.redirect("/db");
 });
 
-router.get("/submit", async (req, res) =>
-    {
-        const user = await User.find();
+router.get("/submit", async (req, res) => {
+    try {
+        const users = await User.find(); // Cambiado a "users" porque devuelve un arreglo
         console.log(users);
-        res.render("user", {user});
-    });
+
+        // Puedes mostrar un mensaje especial si está vacío
+        if (users.length === 0) {
+            return res.render("user", { user: null, message: "No hay usuarios registrados." });
+        }
+
+        res.render("user", { user: users, message: null });
+    } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+        res.status(500).send("Error del servidor");
+    }
+});
+
 
 
 
@@ -508,6 +519,12 @@ router.get("/fme/:id", async (req, res) => {
     
 });
 
+router.get("/ppap/:id", async (req, res) => {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+    res.render("PPAP02", {pars});
+    
+});
 
 
 // router.get('/signup', (req, res, next) => {
@@ -674,6 +691,187 @@ router.get("/pcp/:id", async (req, res) => {
     res.render("pcpr", { pcps });
 });
 
+// En tu archivo Express (por ejemplo, routes.js o app.js)
+router.get('/sev', (req, res) => {
+    const datosFMEA = [
+      {
+        puntaje: 10,
+        efectoProducto: "Falla en cumplir requisitos de seguridad y/o regulaciones (sin alerta)",
+        efectoPlanta: "Puede causar riesgos al operador y ocurre sin alerta"
+      },
+      {
+        puntaje: 9,
+        efectoProducto: "Falla en cumplir requisitos de seguridad y/o regulaciones (con alerta)",
+        efectoPlanta: "Puede causar riesgos al operador y ocurre con alerta"
+      },
+      {
+        puntaje: 8,
+        efectoProducto: "Pérdida de la función primaria (vehículo inoperante sin afectar la seguridad)",
+        efectoPlanta: "Descontinuidad mayor: 100% del producto podría ser descartado. Parada de línea"
+      },
+      {
+        puntaje: 7,
+        efectoProducto: "Degradación de la función primaria (vehículo operante con rendimiento reducido)",
+        efectoPlanta: "Descontinuidad significativa: Parte del lote puede ser descartado"
+      },
+      {
+        puntaje: 6,
+        efectoProducto: "Pérdida de función secundaria (vehículo operante, pero ítems de confort inoperantes)",
+        efectoPlanta: "Descontinuidad moderada: 100% del lote puede necesitar retrabajo"
+      },
+      {
+        puntaje: 5,
+        efectoProducto: "Degradación de función secundaria (rendimiento reducido en ítems de confort)",
+        efectoPlanta: "Descontinuidad moderada: parte del lote puede requerir retrabajo"
+      },
+      {
+        puntaje: 4,
+        efectoProducto: "Ítem de apariencia o ruido percibido por mayoría (>75%) de clientes",
+        efectoPlanta: "Descontinuidad moderada: retrabajo antes del procesamiento"
+      },
+      {
+        puntaje: 3,
+        efectoProducto: "Ítem de apariencia o ruido percibido por muchos (≈50%) clientes",
+        efectoPlanta: "Descontinuidad moderada: retrabajo parcial antes del procesamiento"
+      },
+      {
+        puntaje: 2,
+        efectoProducto: "Ítem de apariencia o ruido percibido por minoría (<25%) de clientes",
+        efectoPlanta: "Descontinuidad menor: leve inconveniente para el proceso"
+      },
+      {
+        puntaje: 1,
+        efectoProducto: "Sin efectos perceptibles",
+        efectoPlanta: "Sin efectos perceptibles"
+      }
+    ];
+  
+    res.render('severidad', { datosFMEA });
+  });
+  
+  router.get('/ocu', (req, res) => {
+    const datosOcurrencia = [
+      {
+        puntaje: 10,
+        probabilidad: "Muy Alta",
+        ocurrencia: "≥ 100 por mil (≥ 1 en 10)"
+      },
+      {
+        puntaje: 9,
+        probabilidad: "Alta",
+        ocurrencia: "50 por mil (1 en 20)"
+      },
+      {
+        puntaje: 8,
+        probabilidad: "Alta",
+        ocurrencia: "20 por mil (1 en 50)"
+      },
+      {
+        puntaje: 7,
+        probabilidad: "Alta",
+        ocurrencia: "10 por mil (1 en 100)"
+      },
+      {
+        puntaje: 6,
+        probabilidad: "Moderada",
+        ocurrencia: "2 por mil (1 en 500)"
+      },
+      {
+        puntaje: 5,
+        probabilidad: "Moderada",
+        ocurrencia: "0.5 por mil (1 en 2,000)"
+      },
+      {
+        puntaje: 4,
+        probabilidad: "Moderada",
+        ocurrencia: "0.1 por mil (1 en 10,000)"
+      },
+      {
+        puntaje: 3,
+        probabilidad: "Baja",
+        ocurrencia: "0.01 por mil (1 en 100,000)"
+      },
+      {
+        puntaje: 2,
+        probabilidad: "Baja",
+        ocurrencia: "≤ 0.001 por mil (1 en 1,000,000)"
+      },
+      {
+        puntaje: 1,
+        probabilidad: "Muy Baja",
+        ocurrencia: "Falla eliminada mediante control preventivo"
+      }
+    ];
+  
+    res.render('ocurrencia', { datosOcurrencia });
+  });
+  
+  router.get('/det', (req, res) => {
+    const datosDeteccion = [
+      {
+        puntaje: 10,
+        oportunidad: "No hay oportunidad de detección",
+        control: "No existe control del proceso; el control no puede detectar o no es analizado.",
+        probabilidad: "Casi imposible"
+      },
+      {
+        puntaje: 9,
+        oportunidad: "Detección improbable en cualquier etapa",
+        control: "Modo de falla o causa difícil de detectar; controles indirectos o aleatorios.",
+        probabilidad: "Muy remota"
+      },
+      {
+        puntaje: 8,
+        oportunidad: "Detección después del proceso",
+        control: "Por operador mediante inspección visual, táctil o auditiva.",
+        probabilidad: "Remota"
+      },
+      {
+        puntaje: 7,
+        oportunidad: "Detección del problema en su origen",
+        control: "Por operador en estación o después del proceso con medición atributiva (pasa/no pasa).",
+        probabilidad: "Muy baja"
+      },
+      {
+        puntaje: 6,
+        oportunidad: "Detección después del proceso",
+        control: "Por operador usando medición variable o verificación manual (torquímetro, etc.).",
+        probabilidad: "Baja"
+      },
+      {
+        puntaje: 5,
+        oportunidad: "Detección del problema en su origen",
+        control: "Por operador o control automatizado con alarma; incluye mediciones en set-up o primera pieza.",
+        probabilidad: "Moderada"
+      },
+      {
+        puntaje: 4,
+        oportunidad: "Detección después del proceso",
+        control: "Por control automatizado que detecta y retiene automáticamente la pieza defectuosa.",
+        probabilidad: "Moderadamente alta"
+      },
+      {
+        puntaje: 3,
+        oportunidad: "Detección del problema en su origen",
+        control: "Control automatizado que detecta y retiene automáticamente la pieza defectuosa.",
+        probabilidad: "Alta"
+      },
+      {
+        puntaje: 2,
+        oportunidad: "Detección del error y/o prevención del problema",
+        control: "Control automatizado que detecta el error y evita procesar piezas defectuosas.",
+        probabilidad: "Muy alta"
+      },
+      {
+        puntaje: 1,
+        oportunidad: "No aplica detección; prevención del error",
+        control: "Prevención por diseño del proceso/producto con dispositivos a prueba de fallos.",
+        probabilidad: "Casi garantizada"
+      }
+    ];
+  
+    res.render('deteccion', { datosDeteccion });
+  });
   
 
 
