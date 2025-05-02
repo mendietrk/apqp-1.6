@@ -172,3 +172,8 @@ por ultimo se escribe el codigo de la plantilla ejs para ingresar el primer usua
 
 no hay un modo directo para que se pueda agregar los datos de un nuevo registro, es para evitar malas practicas de parte de los usuarios, por lo que solo se puede ingresar el primer user desde la liga /submit despues de cargar el usuario de la base de datos. se debe ingresar desde la url sobrescribiendo sobre /db
 una vez ingresado el primer usuario se pueden crear otros desde la funcion editar con la opcion a duplicar para facilitar el ingreso de informacion de multiples cuentas.
+
+1 de Mayo de 2025 en tiempo extra, 4 hrs, se agregan las vistas del PPAP 02,03,04,08,13,14,15,16 y 17.
+
+se valida y se se actualiza app desplegada en Vercel como apqp-1-4.vercel.app
+
