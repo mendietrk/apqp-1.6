@@ -177,3 +177,10 @@ una vez ingresado el primer usuario se pueden crear otros desde la funcion edita
 
 se valida y se se actualiza app desplegada en Vercel como apqp-1-4.vercel.app
 
+Cambios que se han integrado:
+
+1.- El tiempo de espera desde que se envia el nombre de usuario hasta que la base de datos aumento mucho y no es visible desde el el fron end. lo cual ocasiona conflicto por cuanto si el usuario espera demasiado el time out de la BD la bloquea, y si no espera suficiente, el envio de cualquier solicitud al back end rompe el codigo. La solucion es agregar un reloj indicador en Home.ejs para mostrar al usuario el tiempo de espera. 
+
+2.- Las vistas de PPAP necesitan ser convertidas a PDF y es necesario que se incluya en el nombre del archivo el numero de parte que viene de la BD y el nombre de la vista que corresponde a un elemento de PPAP, se dejo funcionando la 02. 
+
+3:- 

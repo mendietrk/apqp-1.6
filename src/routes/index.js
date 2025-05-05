@@ -18,7 +18,7 @@ router.get("/exportar-pdf/:id", async (req, res) => {
 
     // Renderizar HTML con EJS
     const html = await ejs.renderFile(
-      path.join(__dirname, "../views/PPAP02.ejs"),
+      path.join(__dirname, "../views/PPAP03.ejs"),
       { pars, logoBase64 }
     );
 
@@ -64,24 +64,36 @@ const Actividad = require("../models/issues.js");
 const mongoose = require("mongoose");
 
 
-router.post('/db/submit', (req, res) => {
-    const bd1 = req.body.db1; 
-    const URI ='mongodb+srv://' + bd1 +
-      ':JLqfp91zOg8yjP2A@cluster0.lnpsbzn.mongodb.net/rapqp2?retryWrites=true&w=majority';
-      console.log(bd1)
-      mongoose.connect(URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      })
-        .then(() => {
-          console.log("Conexión exitosa a la base de datos");
-        })
-        .catch(error => {
-          console.log("Error al conectar a la base de datos:", error);
+// Ruta modificada
+router.post('/db/submit', async (req, res) => {
+        
+    if (!req.body || !req.body.db1) {
+        console.error("Datos faltantes:", {
+            body: req.body,
+            headers: req.headers
         });
-        res.redirect("/");
-    
-  });
+        return res.status(400).json({ 
+            success: false, 
+            message: "Datos incompletos" 
+        });
+    }
+    const URI = `mongodb+srv://${req.body.db1}:JLqfp91zOg8yjP2A@cluster0.lnpsbzn.mongodb.net/rapqp2?retryWrites=true&w=majority`;
+         
+    try {
+        await mongoose.connect(URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            connectTimeoutMS: 10000
+        });
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Error MongoDB:", error);
+        res.status(500).json({ 
+            success: false, 
+            message: error.message 
+        });
+    }
+});
 
   router.post('/db/submit1', async (req, res) => {
     const { selectedUserId, bd2 } = req.body; // Obtener el _id del usuario seleccionado y la contraseña
@@ -588,11 +600,24 @@ router.get("/ppap2/:id", async (req, res) => {
 });
 
 router.get("/ppap3/:id", async (req, res) => {
+  try {
     const { id } = req.params;
     const pars = await Par.findById(id);
-    res.render("PPAP03", {pars});
-    
+
+    // Leer y codificar el logo como base64
+    const logoPath = path.join(__dirname, "../../public/images/ppap/image001.png");
+    const logoBase64 = fs.readFileSync(logoPath, "base64");
+
+    res.render("PPAP03", {
+      pars,
+      logoBase64
+    });
+  } catch (err) {
+    console.error("Error al renderizar PPAP03:", err);
+    res.status(500).send("Error al generar el reporte.");
+  }
 });
+
 
 router.get("/ppap4/:id", async (req, res) => {
     const { id } = req.params;
