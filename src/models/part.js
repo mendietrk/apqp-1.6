@@ -76,7 +76,8 @@ const partSchema = new Schema
     "pa61": "String",
     "pa62": "String",
     "pa63": "String",
-    "pa64": "String"
+    "pa64": "String",
+    "pa65": "String"
 
   }
   );
