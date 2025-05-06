@@ -7,45 +7,118 @@ const ejs = require("ejs");
 const puppeteer = require("puppeteer"); // O puppeteer-core, según usas
 
 
-router.get("/exportar-pdf/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const pars = await Par.findById(id);
+const rutasPPAP = [
+  {
+    path: "ppap2p",
+    subtitle: "02. Engineering Changes",
+    description: (pa6) => `Engineering Changes for PPAP ${pa6} without changes`,
+    footerText: (pa6) => `PPAP ${pa6} ENGINEERING CHANGES`,
+    fileNamePrefix: "02. Engineering Changes",
+  },
+  {
+    path: "ppap3p",
+    subtitle: "03. Engineering Approval",
+    description: (pa6) => `Engineering Approval for PPAP ${pa6} not applicable`,
+    footerText: (pa6) => `PPAP ${pa6} ENGINEERING APPROVAL`,
+    fileNamePrefix: "03. Engineering Approval",
+  },
+  {
+    path: "ppap4p",
+    subtitle: "04. Design Failure Mode and Effect Analysis (D-FMEA)",
+    description: (pa6) =>
+      `Design Failure Mode and Effect Analysis (D-FMEA) ${pa6} confidential document by Customer.`,
+    footerText: (pa6) => `PPAP ${pa6} DESIGN FAILURE MODE AND EFFECT ANALYSIS (D-FMEA)`,
+    fileNamePrefix: "04. Design Failure Mode and Effect Analysis (D-FMEA)",
+  },
+  {
+    path: "ppap8p",
+    subtitle: "08. Measurement System Analysis",
+    description: (pa6) =>
+      `Measurement System Analysis ${pa6} not required for annual validation.`,
+    footerText: (pa6) => `PPAP ${pa6} MEASUREMENT SYSTEM ANALYSI`,
+    fileNamePrefix: "08. Measurement System Analysis",
+  },
+  {
+    path: "ppap13p",
+    subtitle: "13. Appearance Approval Report",
+    description: (pa6) => `Appearance Approval Report ${pa6} not applicable`,
+    footerText: (pa6) => `PPAP ${pa6} APPEARANCE APPROVAL REPORT`,
+    fileNamePrefix: "13. Appearance Approval Report",
+  },
+  {
+    path: "ppap14p",
+    subtitle: "14. Sample Production Parts",
+    description: (pa6) => `Sample Production Parts ${pa6}`,
+    footerText: (pa6) => `PPAP ${pa6} SAMPLE PRODUCTION PARTS`,
+    fileNamePrefix: "14. Sample Production Parts",
+  },
+  {
+    path: "ppap15p",
+    subtitle: "15. Master Samples",
+    description: (pa6) => `Master Samples ${pa6} not applicable`,
+    footerText: (pa6) => `PPAP ${pa6} MASTER SAMPLES`,
+    fileNamePrefix: "15. Master Samples",
+  },
+  {
+    path: "ppap16p",
+    subtitle: "16. Checking Aids",
+    description: (pa6) => `Checking Aids ${pa6} not available.`,
+    footerText: (pa6) => `PPAP ${pa6} CHECKING AIDS`,
+    fileNamePrefix: "16. Checking Aids",
+  },
+  {
+    path: "ppap17p",
+    subtitle: "17. Customer-Specific Requirements",
+    description: (pa6) =>
+      `Customer-Specific Requirements ${pa6} not required for annual validation.`,
+    footerText: (pa6) => `PPAP ${pa6} CUSTOMER-SPECIFIC REQUIREMENTS`,
+    fileNamePrefix: "17. Customer-Specific Requirements",
+  },
+];
 
-    // Leer logo y convertirlo a base64
-    const logoPath = path.join(__dirname, "../../public/images/ppap/image001.png");
-    const logoBase64 = fs.readFileSync(logoPath, "base64");
+rutasPPAP.forEach(({ path: ruta, subtitle, description, footerText, fileNamePrefix }) => {
+  router.get(`/${ruta}/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const pars = await Par.findById(id);
+      const logoPath = path.join(__dirname, "../../public/images/ppap/image001.png");
+      const logoBase64 = fs.readFileSync(logoPath, "base64");
 
-    // Renderizar HTML con EJS
-    const html = await ejs.renderFile(
-      path.join(__dirname, "../views/PPAP03.ejs"),
-      { pars, logoBase64 }
-    );
+      const html = await ejs.renderFile(
+        path.join(__dirname, "../views/PPAP_Generic.ejs"),
+        {
+          pars,
+          logoBase64,
+          subtitle,
+          description: description(pars.pa6),
+          footerText: footerText(pars.pa6),
+        }
+      );
 
-    // Lanzar Puppeteer y generar PDF
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
+      const nombreArchivo = `${fileNamePrefix} ${pars.pa6 || "sin_nombre"}.pdf`;
 
-    const nombreArchivo = `02.${pars.pa6 || "sin_nombre"} Enginering Changes.pdf`;
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.setContent(html, { waitUntil: "networkidle0" });
 
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-    });
+      const pdfBuffer = await page.pdf({
+        format: "A4",
+        printBackground: true,
+      });
 
-    await browser.close();
+      await browser.close();
 
-    res.set({
-      "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${nombreArchivo}"`,
-    });
+      res.set({
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="${nombreArchivo}"`,
+      });
 
-    res.send(pdfBuffer);
-  } catch (err) {
-    console.error("Error al generar PDF:", err);
-    res.status(500).send("Error al generar el PDF.");
-  }
+      res.send(pdfBuffer);
+    } catch (err) {
+      console.error(`Error al generar PDF para ${ruta}:`, err);
+      res.status(500).send("Error al generar el PDF.");
+    }
+  });
 });
 
 
