@@ -47,6 +47,47 @@ router.get("/ppap2pi/:id", async (req, res) => {
   }
 });
 
+router.get("/ppap14pi/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const pars = await Par.findById(id);
+
+    // Leer logo y convertirlo a base64
+    const logoPath = path.join(__dirname, "../../public/images/ppap/image001.png");
+    const logoBase64 = fs.readFileSync(logoPath, "base64");
+
+    // Renderizar HTML con EJS
+    const html = await ejs.renderFile(
+      path.join(__dirname, "../views/PPAPp14.ejs"),
+      { pars, logoBase64 }
+    );
+
+    // Lanzar Puppeteer y generar PDF
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const nombreArchivo = `14.${pars.pa6 || "sin_nombre"} Sample Production Parts.pdf`;
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+    });
+
+    await browser.close();
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="${nombreArchivo}"`,
+    });
+
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error("Error al generar PDF:", err);
+    res.status(500).send("Error al generar el PDF.");
+  }
+});
+
 const rutasPPAP = [
   {
     path: "ppap2p",
