@@ -1,10 +1,63 @@
 const express = require("express");
 const router = express.Router();
 
+
 const fs = require("fs");
 const path = require("path");
 const ejs = require("ejs");
 const puppeteer = require("puppeteer"); // O puppeteer-core, según usas
+
+
+const Ubicacion = require("../models/ubicacion.js");
+
+// Ruta GET para mostrar la vista
+router.get('/registro-ubicacion', (req, res) => {
+  res.render('../views/ubicacion.ejs'); // Asegúrate de tener "ubicacion.ejs" en tu carpeta "views"
+});
+
+router.post('/registro-ubicacion', async (req, res) => {
+  try {
+    const { nombre, latitud, longitud, fechaHora } = req.body;
+
+    await Ubicacion.create({
+      nombre,
+      latitud: parseFloat(latitud),
+      longitud: parseFloat(longitud),
+      fechaHora: new Date(fechaHora),
+    });
+
+    // Puedes elegir redirigir o enviar respuesta, pero no ambas
+    res.redirect('/ubicaciones'); // ✅ Recomendado si usas una vista
+    // res.send('Ubicación registrada exitosamente'); // ❌ No usar ambas
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al registrar la ubicación');
+  }
+});
+
+
+
+router.get('/ubicaciones', async (req, res) => {
+  try {
+    const ubicaciones = await Ubicacion.find().sort({ fechaHora: -1 }); // más recientes primero
+    res.render('../views/ubicaciones', { ubicaciones });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al obtener ubicaciones');
+  }
+});
+
+router.delete('/ubicaciones/:id', async (req, res) => {
+  try {
+    await Ubicacion.findByIdAndDelete(req.params.id);
+    res.redirect('/ubicaciones');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al borrar el registro');
+  }
+});
+
+
 
 router.get("/ppap2pi/:id", async (req, res) => {
   try {
@@ -136,7 +189,7 @@ const rutasPPAP = [
   {
     path: "ppap15p",
     subtitle: "15. Master Samples",
-    description: (pa6) => `Master Samples ${pa6} not applicable`,
+    description: (pa6) => `Master Samples ${pa6} `,
     footerText: (pa6) => `PPAP ${pa6} MASTER SAMPLES`,
     fileNamePrefix: "15. Master Samples",
   },

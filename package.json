@@ -10,6 +10,7 @@
   "author": "Mendietr",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.20.2",
     "ejs": "^3.1.9",
     "ejs-mate": "^4.0.0",

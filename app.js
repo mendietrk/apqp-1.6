@@ -26,10 +26,14 @@ app.set("view engine", "ejs");
 app.use(morgan("dev"));
 app.use(express.urlencoded({extended: false}));
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // <---- ¡Añade esta línea!
+app.use(methodOverride("_method"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use("/", indexRoutes);
-
+const chrcRoutes = require('./src/routes/chrcRoutes');
 
 // Start server (type: npm run dev)
 app.listen(app.get("port"), () =>
