@@ -169,7 +169,7 @@ const rutasPPAP = [
     subtitle: "08. Measurement System Analysis",
     description: (pa6) =>
       `Measurement System Analysis ${pa6} not required for annual validation.`,
-    footerText: (pa6) => `PPAP ${pa6} MEASUREMENT SYSTEM ANALYSI`,
+    footerText: (pa6) => `PPAP ${pa6} MEASUREMENT SYSTEM ANALYSIS`,
     fileNamePrefix: "08. Measurement System Analysis",
   },
   {
