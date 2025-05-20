@@ -12,7 +12,7 @@ const Ubicacion = require("../models/ubicacion.js");
 
 // Ruta GET para mostrar la vista
 router.get('/registro-ubicacion', (req, res) => {
-  res.render('../views/ubicacion.ejs'); // Asegúrate de tener "ubicacion.ejs" en tu carpeta "views"
+  res.render('../views/ubicacion.ejs'); 
 });
 
 router.post('/registro-ubicacion', async (req, res) => {
@@ -26,7 +26,7 @@ router.post('/registro-ubicacion', async (req, res) => {
       fechaHora: new Date(fechaHora),
     });
 
-    // Puedes elegir redirigir o enviar respuesta, pero no ambas
+   
     res.redirect('/ubicaciones'); // ✅ Recomendado si usas una vista
     // res.send('Ubicación registrada exitosamente'); // ❌ No usar ambas
   } catch (error) {
