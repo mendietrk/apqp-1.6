@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ingresar Subgrupo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 10px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: auto;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    h2 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Ingreso de Subgrupo</h2>
+  <form action="/subgrupo" method="POST">
+    <% for(let i = 1; i <= 5; i++) { %>
+      <input type="number" step="any" name="muestra<%= i %>" placeholder="Muestra <%= i %>" required>
+    <% } %>
+    <button type="submit">Guardar</button>
+  </form>
+</body>
+</html>

@@ -269,6 +269,143 @@ const Fmea = require("../models/Fmea.js");
 const Ace = require("../models/ac.js");
 const Actividad = require("../models/issues.js");
 const mongoose = require("mongoose");
+const Subgrupo = require('../models/Subgrupo');
+
+
+// Funciones auxiliares
+function promedio(arr) {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+
+function rango(arr) {
+  return Math.max(...arr) - Math.min(...arr);
+}
+
+// 📄 Vista para formulario
+router.get('/subgrupo/nuevo', (req, res) => {
+  res.render('formulario');
+});
+
+// 💾 Guardar nuevo subgrupo
+router.post('/subgrupo', async (req, res) => {
+  try {
+    const muestras = [
+      parseFloat(req.body.muestra1),
+      parseFloat(req.body.muestra2),
+      parseFloat(req.body.muestra3),
+      parseFloat(req.body.muestra4),
+      parseFloat(req.body.muestra5)
+    ];
+
+    const nuevo = new Subgrupo({ muestras });
+    await nuevo.save();
+    res.redirect('/grafico');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al guardar');
+  }
+});
+
+// 📥 Vista de importar
+router.get('/subgrupo/importar', (req, res) => {
+  res.render('importar');
+});
+
+// 📤 Procesar importación
+router.post('/subgrupo/importar', async (req, res) => {
+  try {
+    const texto = req.body.datos.trim();
+    const lineas = texto.split('\n');
+
+    for (const linea of lineas) {
+      const partes = linea.trim().split(/\t/);
+      if (partes.length >= 6) {
+        const [, m1, m2, m3, m4, m5] = partes.map(p => parseFloat(p));
+        if ([m1, m2, m3, m4, m5].every(n => !isNaN(n))) {
+          const nuevo = new Subgrupo({ muestras: [m1, m2, m3, m4, m5] });
+          await nuevo.save();
+        }
+      }
+    }
+
+    res.redirect('/subgrupos');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error al importar datos.");
+  }
+});
+
+// 📊 Vista de gráfico X̄-R
+router.get('/grafico', async (req, res) => {
+  try {
+    const subgrupos = await Subgrupo.find().sort({ fecha: 1 });
+
+    const promedios = subgrupos.map(sg => promedio(sg.muestras));
+    const rangos = subgrupos.map(sg => rango(sg.muestras));
+
+    const xBarra = promedio(promedios);
+    const rPromedio = promedio(rangos);
+
+    const A2 = 0.577; // n = 5
+    const D3 = 0;
+    const D4 = 2.114;
+
+    const limites = {
+      x: {
+        central: xBarra,
+        superior: xBarra + A2 * rPromedio,
+        inferior: xBarra - A2 * rPromedio
+      },
+      r: {
+        central: rPromedio,
+        superior: D4 * rPromedio,
+        inferior: D3 * rPromedio
+      }
+    };
+
+    res.render('grafico', { promedios, rangos, limites });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al generar el gráfico');
+  }
+});
+
+// 📋 Ver todos los subgrupos
+router.get('/subgrupos', async (req, res) => {
+  const subgrupos = await Subgrupo.find().sort({ fecha: 1 });
+  res.render('listaSubgrupos', { subgrupos });
+});
+
+// ✏️ Formulario de edición
+router.get('/subgrupo/:id/editar', async (req, res) => {
+  const subgrupo = await Subgrupo.findById(req.params.id);
+  res.render('editarSubgrupo', { subgrupo });
+});
+
+// 💾 Guardar edición
+router.post('/subgrupo/:id', async (req, res) => {
+  const muestras = [
+    parseFloat(req.body.muestra1),
+    parseFloat(req.body.muestra2),
+    parseFloat(req.body.muestra3),
+    parseFloat(req.body.muestra4),
+    parseFloat(req.body.muestra5)
+  ];
+  await Subgrupo.findByIdAndUpdate(req.params.id, { muestras });
+  res.redirect('/subgrupos');
+});
+
+// 🗑️ Eliminar subgrupo
+router.post('/subgrupo/:id/eliminar', async (req, res) => {
+  await Subgrupo.findByIdAndDelete(req.params.id);
+  res.redirect('/subgrupos');
+});
+
+// 🔍 Ver un subgrupo individual (IMPORTANTE: debe ir al final)
+router.get('/subgrupo/:id', async (req, res) => {
+  const subgrupo = await Subgrupo.findById(req.params.id);
+  res.render('show', { subgrupo });
+});
 
 
 // Ruta modificada

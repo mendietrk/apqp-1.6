@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gráfico de Control</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    canvas {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 30px;
+    }
+    body {
+      padding: 20px;
+      font-family: Arial;
+    }
+  </style>
+</head>
+<body>
+  <h2>Gráfico de Medias</h2>
+  <canvas id="xbarChart"></canvas>
+
+  <h2>Gráfico de Rango</h2>
+  <canvas id="rChart"></canvas>
+
+  <script>
+    const promedios = <%- JSON.stringify(promedios) %>;
+    const rangos = <%- JSON.stringify(rangos) %>;
+    const labels = promedios.map((_, i) => i + 1);
+
+    const limites = <%- JSON.stringify(limites) %>;
+
+    const linea = (valor, label, color) => ({
+      label,
+      data: Array(labels.length).fill(valor),
+      borderColor: color,
+      borderWidth: 1,
+      borderDash: [5, 5],
+      pointRadius: 0
+    });
+
+    // X-Bar chart
+    new Chart(document.getElementById('xbarChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Promedios',
+            data: promedios,
+            borderColor: 'black',
+            tension: 0.3
+          },
+          linea(limites.x.superior, 'LSC', 'red'),
+          linea(limites.x.central, 'LC', 'blue'),
+          linea(limites.x.inferior, 'LIC', 'red'),
+        ]
+      }
+    });
+
+    // R chart
+    new Chart(document.getElementById('rChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Rangos',
+            data: rangos,
+            borderColor: 'black',
+            tension: 0.3
+          },
+          linea(limites.r.superior, 'LSC', 'red'),
+          linea(limites.r.central, 'LC', 'blue'),
+          linea(limites.r.inferior, 'LIC', 'red'),
+        ]
+      }
+    });
+  </script>
+</body>
+</html>
+
