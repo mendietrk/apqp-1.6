@@ -45,12 +45,23 @@
   </style>
 </head>
 <body>
-  <h2>Ingreso de Subgrupo</h2>
-  <form action="/subgrupo" method="POST">
-    <% for(let i = 1; i <= 5; i++) { %>
-      <input type="number" step="any" name="muestra<%= i %>" placeholder="Muestra <%= i %>" required>
-    <% } %>
-    <button type="submit">Guardar</button>
-  </form>
-</body>
-</html>
+    <h2>Nuevo Subgrupo</h2>
+    <form action="/subgrupo/nuevo" method="POST">
+        <label for="pa6">Número de parte:</label>
+        <select name="pa6" id="pa6" required>
+          <% partes.forEach(p => { %>
+            <option value="<%= p.pa6 %>"><%= p.pa6 %></option>
+          <% }) %>
+        </select><br>
+    
+        <label for="pa7">Versión:</label>
+        <input type="text" name="pa7" id="pa7" required><br><br>
+    
+        <% for(let i = 1; i <= 5; i++) { %>
+          <label>Muestra <%= i %>: <input type="number" name="muestra<%= i %>" step="any" required></label><br>
+        <% } %>
+    
+        <button type="submit">Guardar</button>
+      </form>
+    </body>
+    </html>

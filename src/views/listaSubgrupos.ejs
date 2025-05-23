@@ -37,10 +37,13 @@
 </head>
 <body>
   <h2>Subgrupos Registrados</h2>
+
   <table>
     <thead>
       <tr>
         <th>#</th>
+        <th>Parte</th>
+        <th>Versión</th>
         <th>Muestra 1</th>
         <th>Muestra 2</th>
         <th>Muestra 3</th>
@@ -53,7 +56,9 @@
       <% subgrupos.forEach((sg, i) => { %>
         <tr>
           <td><%= i + 1 %></td>
-
+          <td><%= sg.pa6 || '-' %></td>
+          <td><%= sg.pa7 || '-' %></td>
+    
           <% if (Array.isArray(sg.muestras) && sg.muestras.length === 5) { %>
             <% sg.muestras.forEach(m => { %>
               <td><%= m %></td>
@@ -61,7 +66,7 @@
           <% } else { %>
             <td colspan="5">Datos incompletos</td>
           <% } %>
-
+    
           <td>
             <a class="btn" href="/subgrupo/<%= sg._id %>/editar">Editar</a>
             <form action="/subgrupo/<%= sg._id %>/eliminar" method="POST" onsubmit="return confirm('¿Eliminar este subgrupo?')">
@@ -71,8 +76,11 @@
         </tr>
       <% }) %>
     </tbody>
+   
   </table>
 </body>
 </html>
+
+
 
 
