@@ -445,6 +445,131 @@ router.get('/grafico', async (req, res) => {
   }
 });
 
+router.get('/grafico2', async (req, res) => {
+  try {
+    const { pa6, pa7 } = req.query;
+
+    // Traer todos los pares pa6 / pa7 únicos
+    const partes = await Par.find({}, 'pa6 pa7');
+
+    // Construir filtro dinámico si se seleccionaron valores
+    const filtro = {};
+    if (pa6) filtro.pa6 = pa6;
+    if (pa7) filtro.pa7 = pa7;
+
+    // Obtener todos los subgrupos ordenados por fecha
+    const subgrupos = await Subgrupo.find(filtro).sort({ fecha: 1 });
+
+    let datosIndividuales = [];
+    let rangosMoviles = [];
+    let limites = null;
+    let reglasVioladas = [];
+
+    if (subgrupos.length > 0) {
+      // Extraer todas las muestras individuales en orden secuencial
+      subgrupos.forEach(sg => {
+        datosIndividuales = datosIndividuales.concat(sg.muestras);
+      });
+
+      // Calcular rangos móviles (diferencias absolutas entre puntos consecutivos)
+      for (let i = 1; i < datosIndividuales.length; i++) {
+        const rangoMovil = Math.abs(datosIndividuales[i] - datosIndividuales[i - 1]);
+        rangosMoviles.push(rangoMovil);
+      }
+
+      // Calcular límites de control para gráficos I-MR
+      const mediaIndividuales = promedio(datosIndividuales);
+      const rangoMovilPromedio = promedio(rangosMoviles);
+
+      // Constantes para gráficos I-MR
+      const E2 = 2.66; // Factor para límites de control de valores individuales
+      const D3 = 0;    // Para n=2 (rangos móviles)
+      const D4 = 3.267; // Para n=2 (rangos móviles)
+
+      limites = {
+        i: {
+          central: mediaIndividuales,
+          superior: mediaIndividuales + E2 * rangoMovilPromedio,
+          inferior: mediaIndividuales - E2 * rangoMovilPromedio
+        },
+        mr: {
+          central: rangoMovilPromedio,
+          superior: D4 * rangoMovilPromedio,
+          inferior: D3 * rangoMovilPromedio
+        }
+      };
+
+      // Función para evaluar reglas de control
+      const evaluarReglas = (datos, limites) => {
+        const resultados = Array(datos.length).fill(0);
+        const media = limites.i.central;
+        const lsc = limites.i.superior;
+        const lic = limites.i.inferior;
+
+        // Evaluar cada punto
+        for (let i = 0; i < datos.length; i++) {
+          // Regla 1: Puntos fuera de los límites de control
+          if (datos[i] > lsc || datos[i] < lic) {
+            resultados[i] = 1;
+            continue;
+          }
+
+          // Regla 2: 4 puntos consecutivos arriba/abajo de la media
+          if (i >= 3) {
+            const segmento = datos.slice(i - 3, i + 1);
+            const todosArriba = segmento.every(p => p > media);
+            const todosAbajo = segmento.every(p => p < media);
+            
+            if (todosArriba || todosAbajo) {
+              resultados[i] = 2;
+              continue;
+            }
+          }
+
+          // Regla 3: 8 puntos alternando lados de la media
+          if (i >= 7) {
+            const segmento = datos.slice(i - 7, i + 1);
+            let alternando = true;
+            
+            for (let j = 1; j < segmento.length; j++) {
+              const actual = segmento[j] > media;
+              const anterior = segmento[j - 1] > media;
+              
+              if (actual === anterior) {
+                alternando = false;
+                break;
+              }
+            }
+            
+            if (alternando) {
+              resultados[i] = 3;
+            }
+          }
+        }
+
+        return resultados;
+      };
+
+      // Evaluar reglas para los datos individuales
+      reglasVioladas = evaluarReglas(datosIndividuales, limites);
+    }
+
+    res.render('grafico2', {
+      partes,
+      pa6,
+      pa7,
+      datosIndividuales,
+      rangosMoviles,
+      limites,
+      reglasVioladas
+    });
+
+  } catch (error) {
+    console.error('Error al generar gráficos I-MR:', error);
+    res.status(500).send('Error al generar gráficos de datos individuales');
+  }
+});
+
 
 // 📋 Ver todos los subgrupos
 router.get('/subgrupos', async (req, res) => {
