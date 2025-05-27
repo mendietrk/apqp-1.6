@@ -570,6 +570,170 @@ router.get('/grafico2', async (req, res) => {
   }
 });
 
+router.get('/subgrupos', async (req, res) => {
+  const subgrupos = await Subgrupo.find().populate('parte').sort({ fecha: 1 });
+  res.render('listaSubgrupos', { subgrupos });
+});
+
+// Ruta que muestra la vista show.ejs
+router.get('/show', async (req, res) => {
+  const { pa6, pa7 } = req.query;
+
+  const partes = await Subgrupo.find().select('pa6 pa7'); // o el modelo que estés usando para partes
+  let subgrupos = [];
+  let datosIndividuales = [];
+
+  if (pa6) {
+    let filtro = { pa6 };
+    if (pa7 && pa7 !== 'N/A') {
+      filtro.pa7 = pa7;
+    } else if (pa7 === 'N/A') {
+      filtro.pa7 = null;
+    }
+
+    subgrupos = await Subgrupo.find(filtro).sort({ fecha: 1 });
+
+    // Obtener datos individuales desagrupados
+    datosIndividuales = subgrupos.flatMap(sg => sg.muestras);
+  }
+
+  res.render('show', {
+    partes,
+    pa6,
+    pa7,
+    subgrupos,
+    datosIndividuales
+  });
+});
+
+
+
+// Ruta GET que muestra la vista sort.ejs con los datos ordenados
+router.get('/sort', (req, res) => {
+  const datosOrdenados = req.session.datosOrdenados || [];
+  res.render('sort', { datosIndividuales: datosOrdenados });
+});
+
+router.post('/sort', (req, res) => {
+  try {
+    let datos = req.body.datos;
+
+    if (typeof datos === 'string') {
+      datos = JSON.parse(datos);
+    }
+
+    if (!Array.isArray(datos)) {
+      throw new Error('Formato incorrecto');
+    }
+
+    res.render('sort', { datosIndividuales: datos });
+  } catch (error) {
+    console.error('Error procesando los datos:', error);
+    res.status(400).send('Error procesando los datos.');
+  }
+});
+
+// Función para barajar un arreglo (Fisher–Yates shuffle)
+function shuffle(array) {
+  let currentIndex = array.length;
+  let temporaryValue, randomIndex;
+
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // Intercambia elementos
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+// Ruta para mostrar los datos reorganizados
+router.post('/parimpar', (req, res) => {
+  const datosOrdenados = JSON.parse(req.body.datosOrdenados || '[]');
+
+  // 1. Separar en pares e impares por índice
+  const pares = [];
+  const impares = [];
+
+  datosOrdenados.forEach((valor, index) => {
+    if (index % 2 === 0) {
+      pares.push(valor);
+    } else {
+      impares.push(valor);
+    }
+  });
+
+  // 2. Barajar cada grupo
+  const paresAleatorios = shuffle(pares);
+  const imparesAleatorios = shuffle(impares);
+
+  // 3. Combinar los datos en el nuevo patrón: 2 impares, 3 pares, 3 impares, 2 pares
+  const combinados = [];
+  let impIndex = 0;
+  let parIndex = 0;
+  let paso = 0;
+
+  while (impIndex < imparesAleatorios.length || parIndex < paresAleatorios.length) {
+    switch (paso % 4) {
+      case 0: // 2 impares
+        combinados.push(...imparesAleatorios.slice(impIndex, impIndex + 1));
+        impIndex += 1;
+        break;
+      case 1: // 3 pares
+        combinados.push(...paresAleatorios.slice(parIndex, parIndex + 2));
+        parIndex += 2;
+        break;
+      case 2: // 3 impares
+        combinados.push(...imparesAleatorios.slice(impIndex, impIndex + 2));
+        impIndex += 2;
+        break;
+      case 3: // 2 pares
+        combinados.push(...paresAleatorios.slice(parIndex, parIndex + 1));
+        parIndex += 1;
+        break;
+    }
+    paso++;
+  }
+
+  res.render('parimpar', { listaFinal: combinados });
+});
+
+
+// Recibir en random
+
+router.post('/random', (req, res) => {
+  try {
+    const datosPares = JSON.parse(req.body.datosPares);
+    const datosImpares = JSON.parse(req.body.datosImpares);
+
+    res.render('random', {
+      datosPares,
+      datosImpares
+    });
+  } catch (error) {
+    res.status(400).send('Error al procesar los datos aleatorios.');
+  }
+});
+
+
+// Ruta siguiente (ejemplo: guardar en la base de datos, enviar a análisis, etc.)
+router.post('/procesar-final', async (req, res) => {
+  const datosOrdenados = req.session.datosOrdenados || [];
+
+  // Aquí podrías hacer algo con los datos ordenados, por ejemplo:
+  // - Guardarlos como un nuevo documento
+  // - Asociarlos a un proceso de análisis
+  // - Exportarlos
+
+  // Por ahora solo mostramos un mensaje
+  res.send(`Procesados ${datosOrdenados.length} datos ordenados correctamente.`);
+});
+
+
 
 // 📋 Ver todos los subgrupos
 router.get('/subgrupos', async (req, res) => {
@@ -619,6 +783,81 @@ router.post('/subgrupo/:id/eliminar', async (req, res) => {
 router.get('/subgrupo/:id', async (req, res) => {
   const subgrupo = await Subgrupo.findById(req.params.id);
   res.render('show', { subgrupo });
+});
+
+router.get('/exportar', async (req, res) => {
+  const datos = await Subgrupo.find();
+
+  // Extraer valores únicos para las listas
+  const partesUnicas = [...new Set(datos.map(d => d.pa6))].map(pa6 => ({ pa6 }));
+  const versionesUnicas = [...new Set(datos.map(d => d.pa7))].map(pa7 => ({ pa7 }));
+
+  res.render('exportar', {
+    partes: partesUnicas,
+    versiones: versionesUnicas,
+    filtrados: null
+  });
+});
+
+// POST - Procesar selección y mostrar resultados
+router.post('/exportar', async (req, res) => {
+  const { pa6, pa7 } = req.body;
+
+  const datos = await Subgrupo.find();
+  const partesUnicas = [...new Set(datos.map(d => d.pa6))].map(pa6 => ({ pa6 }));
+  const versionesUnicas = [...new Set(datos.map(d => d.pa7))].map(pa7 => ({ pa7 }));
+
+  const filtrados = await Subgrupo.find({ pa6, pa7 });
+
+  res.render('exportar', {
+    partes: partesUnicas,
+    versiones: versionesUnicas,
+    filtrados,
+    pa6,
+    pa7
+  });
+});
+
+const ExcelJS = require('exceljs');
+
+// Exportar a Excel
+router.post('/exportar/excel', async (req, res) => {
+  const { pa6, pa7 } = req.body;
+  const datos = await Subgrupo.find({ pa6, pa7 });
+
+  // Reunir todas las muestras en un solo arreglo
+  let todasMuestras = [];
+  datos.forEach(doc => {
+    todasMuestras.push(...doc.muestras);
+  });
+
+  // Crear libro Excel
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Muestras');
+
+  // Encabezado
+  worksheet.addRow(['Muestra']);
+
+  // Agregar muestras como filas
+  todasMuestras.forEach(valor => {
+    worksheet.addRow([valor]);
+  });
+
+  // Nombre del archivo
+  const filename = `08 initial study${pa6}${pa7}.xls`;
+
+  // Enviar archivo como descarga
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="${filename}"`
+  );
+  res.setHeader(
+    'Content-Type',
+    'application/vnd.ms-excel'
+  );
+
+  await workbook.xlsx.write(res);
+  res.end();
 });
 
 
