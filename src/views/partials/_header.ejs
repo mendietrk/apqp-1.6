@@ -1,33 +1,69 @@
 <%- include ('../partials/styles'); %>
-    
-    <title>Registro de Datos</title>
-  </head>
-  <nav>
-    <ul>
-      <li><a href="/org">Organización</a></li>
-      <li><a href="/cust">Clientes</a></li>
-      <li><a href="/par">Productos</a></li>
-      <li><a href="/ope">Operaciones</a></li>
-      <li><a href="/chr">Características</a></li>
-      <li><a href="/fme">Modos de Falla</a></li>
-      <li><a href="/pro">Procedimientos</a></li>
-      <li><a href="/pcp">Plan de control</a></li>
-      <li><a href="/ace">Acción Correctiva</a></li>
-      <li><a href="/registro-ubicacion">Ubicacion</a></li>
-      <li><a href="/subgrupo/nuevo">➕ Agregar Subgrupo</a></li>
-      <li><a href="/subgrupos">📋 Ver Subgrupos</a></li>
-      <li><a href="/grafico">📊 Ver Gráfico de Control</a></li>
-      <li><a href="/subgrupo/importar">📥 Importar Subgrupos</a></li>
+<title>Registro de Datos</title>
+</head>
 
-    </ul>
-  </nav>
-  <br>
-  <a href="/logout">Salir</a>
-  <a href="/" class="btn">Volver</a>
+<nav>
+  <ul>
+    <li><a href="/org">Organización</a></li>
+    <li><a href="/cust">Clientes</a></li>
+    <li><a href="/par">Productos</a></li>
+    <li><a href="/ope">Operaciones</a></li>
+    <li><a href="/chr">Características</a></li>
+    <li><a href="/fme">Modos de Falla</a></li>
+    <li><a href="/pro">Procedimientos</a></li>
+    <li><a href="/pcp">Plan de control</a></li>
+    <li><a href="/ace">Acción Correctiva</a></li>
+    <li><a href="/registro-ubicacion">Ubicacion</a></li>
+    <li><a href="/subgrupo/nuevo">➕ Agregar Subgrupo</a></li>
+    <li><a href="/subgrupos">📋 Ver Subgrupos</a></li>
+    <li><a href="/grafico">📊 Ver Gráfico de Control</a></li>
+    <li><a href="/subgrupo/importar">📥 Importar Subgrupos</a></li>
+  </ul>
+</nav>
 
-  
-    <h2>Planeacion Avanzada de la Calidad del Producto</h2>
+<br>
+<a href="/logout">Salir</a>
+<a href="/" class="btn">Volver</a>
+
+<h2>Planeacion Avanzada de la Calidad del Producto</h2>
 </br>
+
+<!-- Temporizador visible -->
+<div style="margin: 10px 0; padding: 10px; background-color: #eee; width: fit-content; border-radius: 5px;">
+  Tiempo activo: <span id="activeTime">00:00</span> (se reinicia con actividad)
+</div>
+
+<script>
+  let lastActivity = Date.now();
+  const timeoutLimit = 20 * 60 * 1000; // 20 minutos en milisegundos
+  const timerDisplay = document.getElementById('activeTime');
+
+  // Formato mm:ss
+  function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+    const seconds = String(totalSeconds % 60).padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+  // Actualiza la vista cada segundo
+  setInterval(() => {
+    const now = Date.now();
+    const diff = now - lastActivity;
+    timerDisplay.textContent = formatTime(diff);
+
+    if (diff >= timeoutLimit) {
+      alert('⚠️ Sesión expirada por inactividad de 20 minutos.');
+      window.location.href = '/logout'; // O cualquier acción que quieras
+    }
+  }, 1000);
+
+  // Escucha actividad del usuario
+  ['click', 'keydown', 'mousemove', 'scroll'].forEach(evt =>
+    document.addEventListener(evt, () => lastActivity = Date.now())
+  );
+</script>
+
 
 
 <!-- </br>
