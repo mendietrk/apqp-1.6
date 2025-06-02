@@ -393,7 +393,20 @@ router.get('/grafico', async (req, res) => {
     const { pa6, pa7 } = req.query;
 
     // Traer todos los pares pa6 / pa7 únicos
-    const partes = await Par.find({}, 'pa6 pa7');
+    const partes = await Subgrupo.aggregate([
+      {
+        $group: {
+          _id: { pa6: "$pa6", pa7: "$pa7" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          pa6: "$_id.pa6",
+          pa7: "$_id.pa7"
+        }
+      }
+    ]);
 
     // Construir filtro dinámico si se seleccionaron valores
     const filtro = {};
@@ -450,7 +463,7 @@ router.get('/grafico2', async (req, res) => {
     const { pa6, pa7 } = req.query;
 
     // Traer todos los pares pa6 / pa7 únicos
-    const partes = await Par.find({}, 'pa6 pa7');
+    const partes = await Subgrupo.find({}, 'pa6 pa7');
 
     // Construir filtro dinámico si se seleccionaron valores
     const filtro = {};
@@ -880,7 +893,7 @@ router.post('/db/submit', async (req, res) => {
         await mongoose.connect(URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            connectTimeoutMS: 10000
+            connectTimeoutMS: 1200000  
         });
         res.json({ success: true });
     } catch (error) {
