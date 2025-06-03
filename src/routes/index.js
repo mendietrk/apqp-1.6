@@ -905,6 +905,8 @@ router.post('/db/submit', async (req, res) => {
     }
 });
 
+
+
   router.post('/db/submit1', async (req, res) => {
     const { selectedUserId, bd2 } = req.body; // Obtener el _id del usuario seleccionado y la contraseña
     console.log('ID del usuario seleccionado:', selectedUserId); // Verificar el valor
@@ -930,7 +932,7 @@ router.post('/db/submit', async (req, res) => {
 
   router.get('/', (req, res, next) =>
     {
-            res.render('home');
+            res.render('home', { dbConnectedAt: Date.now() });
     });
 
 router.get("/us", async (req, res) =>

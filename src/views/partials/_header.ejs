@@ -4,16 +4,16 @@
 
 <nav>
   <ul>
-    <li><a href="/org">Organización</a></li>
-    <li><a href="/cust">Clientes</a></li>
-    <li><a href="/par">Productos</a></li>
-    <li><a href="/ope">Operaciones</a></li>
-    <li><a href="/chr">Características</a></li>
-    <li><a href="/fme">Modos de Falla</a></li>
-    <li><a href="/pro">Procedimientos</a></li>
-    <li><a href="/pcp">Plan de control</a></li>
-    <li><a href="/ace">Acción Correctiva</a></li>
-    <li><a href="/registro-ubicacion">Ubicacion</a></li>
+    <li><a href="/org">🏢 Organización</a></li>
+    <li><a href="/cust">👥 Clientes</a></li>
+    <li><a href="/par">📦 Productos</a></li>
+    <li><a href="/ope">⚙️ Operaciones</a></li>
+    <li><a href="/chr">🔍 Características</a></li>
+    <li><a href="/fme">💥 Modos de Falla</a></li>
+    <li><a href="/pro">📄 Procedimientos</a></li>
+    <li><a href="/pcp">🗂️ Plan de control</a></li>
+    <li><a href="/ace">✅ Acción Correctiva</a></li>
+    <li><a href="/registro-ubicacion">📍 Ubicación</a></li>
     <li><a href="/subgrupo/nuevo">➕ Agregar Subgrupo</a></li>
     <li><a href="/subgrupos">📋 Ver Subgrupos</a></li>
     <li><a href="/grafico">📊 Ver Gráfico de Control</a></li>
@@ -25,20 +25,27 @@
 <a href="/logout">Salir</a>
 <a href="/" class="btn">Volver</a>
 
-<h2>Planeacion Avanzada de la Calidad del Producto</h2>
+<h2>Planeación Avanzada de la Calidad del Producto</h2>
 </br>
 
-<!-- Temporizador visible -->
-<div style="margin: 10px 0; padding: 10px; background-color: #eee; width: fit-content; border-radius: 5px;">
-  Tiempo activo: <span id="activeTime">00:00</span> (se reinicia con actividad)
+<!-- Temporizador desde el inicio de sesión -->
+<div id="sessionBox" style="margin: 10px 0; padding: 10px; background-color: #eef; width: fit-content; border-radius: 5px;">
+  Tiempo desde conexión con base de datos: <span id="activeTime">00:00</span>
 </div>
 
-<script>
-  let lastActivity = Date.now();
-  const timeoutLimit = 20 * 60 * 1000; // 20 minutos en milisegundos
-  const timerDisplay = document.getElementById('activeTime');
+<!-- Mensaje de sesión expirada -->
+<div id="timeoutMsg" style="display: none; padding: 15px; background-color: #f8d7da; color: #721c24; border-radius: 5px; margin-top: 20px;">
+  ⚠️ La sesión con la base de datos ha expirado.<br>Por favor vuelve a ingresar tu clave.<br><br>
+  <a href="/" class="btn">Volver al inicio</a>
+</div>
 
-  // Formato mm:ss
+<<script>
+  const dbStartTime = Number(<%= dbConnectedAt %>);
+  const timeoutLimit = 20 * 60 * 1000;
+  const timerDisplay = document.getElementById('activeTime');
+  const timeoutMsg = document.getElementById('timeoutMsg');
+  const sessionBox = document.getElementById('sessionBox');
+
   function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
@@ -46,26 +53,24 @@
     return `${minutes}:${seconds}`;
   }
 
-  // Actualiza la vista cada segundo
-  setInterval(() => {
+  function checkTimeout() {
     const now = Date.now();
-    const diff = now - lastActivity;
-    timerDisplay.textContent = formatTime(diff);
+    const elapsed = now - dbStartTime;
 
-    if (diff >= timeoutLimit) {
-      alert('⚠️ Sesión expirada por inactividad de 20 minutos.');
-      window.location.href = '/logout'; // O cualquier acción que quieras
+    timerDisplay.textContent = formatTime(elapsed);
+
+    if (elapsed >= timeoutLimit) {
+      sessionBox.style.display = 'none';
+      timeoutMsg.style.display = 'block';
+    } else {
+      sessionBox.style.display = 'block';
+      timeoutMsg.style.display = 'none';
     }
-  }, 1000);
+  }
 
-  // Escucha actividad del usuario
-  ['click', 'keydown', 'mousemove', 'scroll'].forEach(evt =>
-    document.addEventListener(evt, () => lastActivity = Date.now())
-  );
+  checkTimeout();
+  setInterval(checkTimeout, 1000);
 </script>
 
 
 
-<!-- </br>
-</br>
-</br> -->
