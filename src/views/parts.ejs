@@ -19,7 +19,7 @@
             <% for(var i = 0; i < pars.length; i++) { %>
             <tr>
                 <td class="pa6"><%= pars[i].pa6 %></td>
-                <td class="pa7"><%= pars[i].pa7 %></td>
+                <td class="pa7"><%= pars[i].pa1 %></td>
                 <td class="plus">
                     <a href="/par/edit/<%= pars[i]._id %>" class="edit-btn">Editar</a>
                     <a href="/ope/<%= pars[i]._id %>" class="edit-btn">Registrar Operación</a>
@@ -46,8 +46,13 @@
                     <a href="/ppap2pi/<%= pars[i]._id %>" class="download-btn" target="_blank">2pi</a>
                     <a href="/ppap14pi/<%= pars[i]._id %>" class="download-btn" target="_blank">14pi</a>
 
+                   
+                    <% if (pars[i].pa62) { %>
+                        <a href="<%= pars[i].pa62 %>" class="download-btn" target="_blank">2024</a>
+                    <% } %>
+
                     <% if (pars[i].pa63) { %>
-                        <a href="<%= pars[i].pa63 %>" class="download-btn" target="_blank">Aprobado</a>
+                        <a href="<%= pars[i].pa63 %>" class="download-btn" target="_blank">2025</a>
                     <% } %>
                 </td>
             </tr>
